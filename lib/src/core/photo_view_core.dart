@@ -360,6 +360,7 @@ class PhotoViewCoreState extends State<PhotoViewCore>
               onScaleUpdate: onScaleUpdate,
               onScaleEnd: onScaleEnd,
               hitDetector: this,
+              enablePanAlways: widget.enablePanAlways,
               onTapUp: widget.onTapUp != null
                   ? (details) => widget.onTapUp!(context, details, value)
                   : null,

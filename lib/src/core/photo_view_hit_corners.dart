@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:photo_view/src/controller/photo_view_controller_delegate.dart'
-    show PhotoViewControllerDelegate;
+import 'package:photo_view/src/controller/photo_view_controller_delegate.dart' show PhotoViewControllerDelegate;
 
 mixin HitCornersDetector on PhotoViewControllerDelegate {
   HitCorners _hitCornersX() {
@@ -26,43 +25,45 @@ mixin HitCornersDetector on PhotoViewControllerDelegate {
     return HitCorners(y <= cornersY.min, y >= cornersY.max);
   }
 
-  bool _shouldMoveAxis(
-      HitCorners hitCorners, double mainAxisMove, double crossAxisMove) {
+  bool _shouldMoveAxis(HitCorners hitCorners, double mainAxisMove, double crossAxisMove, bool enablePanAlways) {
     if (mainAxisMove == 0) {
       return false;
     }
+
     if (!hitCorners.hasHitAny) {
       return true;
     }
-    final axisBlocked = hitCorners.hasHitBoth ||
-        (hitCorners.hasHitMax ? mainAxisMove > 0 : mainAxisMove < 0);
-    if (axisBlocked) {
+
+    final axisBlocked = hitCorners.hasHitBoth || (hitCorners.hasHitMax ? mainAxisMove > 0 : mainAxisMove < 0);
+
+    if (axisBlocked && !enablePanAlways) {
       return false;
     }
+
     return true;
   }
 
-  bool _shouldMoveX(Offset move) {
+  bool _shouldMoveX(Offset move, bool enablePanAlways) {
     final hitCornersX = _hitCornersX();
     final mainAxisMove = move.dx;
     final crossAxisMove = move.dy;
 
-    return _shouldMoveAxis(hitCornersX, mainAxisMove, crossAxisMove);
+    return _shouldMoveAxis(hitCornersX, mainAxisMove, crossAxisMove, enablePanAlways);
   }
 
-  bool _shouldMoveY(Offset move) {
+  bool _shouldMoveY(Offset move, bool enablePanAlways) {
     final hitCornersY = _hitCornersY();
     final mainAxisMove = move.dy;
     final crossAxisMove = move.dx;
 
-    return _shouldMoveAxis(hitCornersY, mainAxisMove, crossAxisMove);
+    return _shouldMoveAxis(hitCornersY, mainAxisMove, crossAxisMove, enablePanAlways);
   }
 
-  bool shouldMove(Offset move, Axis mainAxis) {
+  bool shouldMove(Offset move, Axis mainAxis, bool enablePanAlways) {
     if (mainAxis == Axis.vertical) {
-      return _shouldMoveY(move);
+      return _shouldMoveY(move, enablePanAlways);
     }
-    return _shouldMoveX(move);
+    return _shouldMoveX(move, enablePanAlways);
   }
 }
 
